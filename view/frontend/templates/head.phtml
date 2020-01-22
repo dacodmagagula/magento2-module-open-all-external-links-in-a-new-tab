@@ -1,0 +1,118 @@
+
+<?php
+
+$popupModuled = $this->getConfig('enable');
+$popupEnabled = $this->getConfig('enable_popup');
+$popupTitle = $this->getConfig('popup_title');
+$popupText = $this->getConfig('popup_text');
+
+$asset_repository = $this->assetRepository;
+
+$bootstrapCssAsset = $asset_repository->createAsset('Dacod_ExternalLinksInNewTab::modal_and_btn_bootstrap.css');
+$bootstrapJsAsset = $asset_repository->createAsset('Dacod_ExternalLinksInNewTab::modal_bootstrap.js');
+
+$bootstrapCssUrl = $bootstrapCssAsset->getUrl();
+$bootstrapJssUrl = $bootstrapJsAsset->getUrl();
+
+
+?>
+
+<?php if($popupModuled==1 && $popupEnabled==1): ?>
+	
+	<script src="<?php echo $bootstrapJssUrl; ?>"></script>
+	<link rel="stylesheet" href="<?php echo $bootstrapCssUrl; ?>">
+	
+	<script>
+	    require(
+	        [
+	            'jquery',
+	            'Magento_Ui/js/modal/modal'
+	        ],
+	        function($,modal) {
+
+	        	var dacodExternalLink = '';
+
+	            var options = {
+	                type: 'popup',
+	                responsive: true,
+	                innerScroll: true,
+	                title: <?php echo "'".$popupTitle."'";?>,
+	                buttons: [
+
+	                {
+	                    text: $.mage.__('Cancel'),
+	                    class: '',
+	                    click: function () {
+	                        this.closeModal();
+	                    }
+	                },
+
+	                {
+	                    text: $.mage.__('Continue'),
+	                    class: '',
+	                    click: function () {
+	                        window.open(dacodExternalLink,'_blank');
+	                    }
+	                }
+
+
+
+
+	                ]
+	            };
+
+	            $("body").append("<p id='myModel'></p>");
+
+	            $('#myModel').html(<?php echo "'<br>".$popupText."'";?>);
+	            var popup = modal(options, $('#myModel'));
+
+	            $("a").on("click",function(event){
+
+	            	
+	            	dacodExternalLink = $(this).attr('href');
+
+	            	//if link links internally open
+	            	if(!((dacodExternalLink.indexOf(window.location.hostname) >= 0) || dacodExternalLink=="#" || dacodExternalLink=="javascript:void(0)")){
+
+	            			event.preventDefault();
+
+	            			$('#myModel').modal('openModal');
+
+	            		}
+
+	            });
+	        }
+	    );
+	</script>
+
+	<style type="text/css">
+	.modal-popup._inner-scroll .modal-inner-wrap {
+	    max-height: 95%;
+	    max-width: 40%;
+	}
+	</style>
+
+<?php elseif($popupModuled==1 && $popupEnabled==0): ?>
+
+	<script>
+
+		window.onload = function(){
+
+		  var anchors = document.getElementsByTagName('a');
+		  for (var i=0; i<anchors.length; i++){
+
+		    console.log(window.location.hostname);
+
+		  if(!((anchors[i].href.indexOf(window.location.hostname) >= 0) || anchors[i].href=="#" || anchors[i].href=="javascript:void(0)")){
+
+		   anchors[i].setAttribute('target', '_blank');
+
+		  }
+		    
+		  }
+
+		}
+
+	</script>
+
+<?php endif; ?>
