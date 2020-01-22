@@ -21,76 +21,81 @@ $bootstrapJssUrl = $bootstrapJsAsset->getUrl();
 	
 	<script src="<?php echo $bootstrapJssUrl; ?>"></script>
 	<link rel="stylesheet" href="<?php echo $bootstrapCssUrl; ?>">
-	
+
 	<script>
 	    require(
 	        [
-	            'jquery',
-	            'Magento_Ui/js/modal/modal'
+	            'jquery'
 	        ],
-	        function($,modal) {
+	        function($) {
+
+		      var anchors = document.getElementsByTagName('a');
+
+			  for (var i=0; i<anchors.length; i++){
+
+
+			  if(!((anchors[i].href.indexOf(window.location.hostname) >= 0) || anchors[i].href=="#" || anchors[i].href=="javascript:void(0)")){
+
+			   anchors[i].setAttribute('data-target', '#myModal');
+			   anchors[i].setAttribute('data-toggle', 'modal');
+			   
+
+			  }
+			    
+			  }
+
+	        $("body").append('\
+				  <!-- Modal -->\
+				  <div class="modal fade" id="myModal" role="dialog">\
+				    <div class="modal-dialog">\
+				      <!-- Modal content-->\
+				      <div class="modal-content">\
+				        <div class="modal-header">\
+				          <button type="button" class="close" data-dismiss="modal">&times;</button>\
+				          <h4 class="modal-title"><?php echo $popupTitle; ?></h4>\
+				        </div>\
+				        <div class="modal-body">\
+				          <p><?php echo $popupText; ?></p>\
+				        </div>\
+				        <div class="modal-footer">\
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>\
+				          <button type="button" id="dacod-external-links-continue" class="btn btn-default">Continue</button>\
+				        </div>\
+				      </div>\
+				    </div>\
+				  </div>');
 
 	        	var dacodExternalLink = '';
 
-	            var options = {
-	                type: 'popup',
-	                responsive: true,
-	                innerScroll: true,
-	                title: <?php echo "'".$popupTitle."'";?>,
-	                buttons: [
-
-	                {
-	                    text: $.mage.__('Cancel'),
-	                    class: '',
-	                    click: function () {
-	                        this.closeModal();
-	                    }
-	                },
-
-	                {
-	                    text: $.mage.__('Continue'),
-	                    class: '',
-	                    click: function () {
-	                        window.open(dacodExternalLink,'_blank');
-	                    }
-	                }
-
-
-
-
-	                ]
-	            };
-
-	            $("body").append("<p id='myModel'></p>");
-
-	            $('#myModel').html(<?php echo "'<br>".$popupText."'";?>);
-	            var popup = modal(options, $('#myModel'));
+	    
+	           
 
 	            $("a").on("click",function(event){
 
-	            	
-	            	dacodExternalLink = $(this).attr('href');
 
-	            	//if link links internally open
-	            	if(!((dacodExternalLink.indexOf(window.location.hostname) >= 0) || dacodExternalLink=="#" || dacodExternalLink=="javascript:void(0)")){
+	            	if(!(($(this).attr('href').indexOf(window.location.hostname) >= 0) || $(this).attr('href')=="#" || $(this).attr('href')=="javascript:void(0)")){
 
-	            			event.preventDefault();
+		            	event.preventDefault();
+		            	dacodExternalLink = $(this).attr('href');
 
-	            			$('#myModel').modal('openModal');
 
-	            		}
+	            	}       	
 
 	            });
+
+	            $("#dacod-external-links-continue").on("click",function(event){
+
+	            	event.preventDefault();
+	            	window.open(dacodExternalLink,'_blank');
+
+	            });
+
+
+	            
 	        }
 	    );
 	</script>
 
-	<style type="text/css">
-	.modal-popup._inner-scroll .modal-inner-wrap {
-	    max-height: 95%;
-	    max-width: 40%;
-	}
-	</style>
 
 <?php elseif($popupModuled==1 && $popupEnabled==0): ?>
 
