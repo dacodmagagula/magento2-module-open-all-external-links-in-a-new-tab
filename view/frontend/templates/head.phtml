@@ -10,16 +10,20 @@ $asset_repository = $this->assetRepository;
 
 $bootstrapCssAsset = $asset_repository->createAsset('Dacod_ExternalLinksInNewTab::modal_and_btn_bootstrap.css');
 $bootstrapJsAsset = $asset_repository->createAsset('Dacod_ExternalLinksInNewTab::modal_bootstrap.js');
+$modalControllerAsset = $asset_repository->createAsset('Dacod_ExternalLinksInNewTab::modal_controller.js');
+$withoutPopupAsset = $asset_repository->createAsset('Dacod_ExternalLinksInNewTab::without_popup.js');
 
 $bootstrapCssUrl = $bootstrapCssAsset->getUrl();
 $bootstrapJssUrl = $bootstrapJsAsset->getUrl();
-
+$modalControllerUrl = $modalControllerAsset->getUrl();
+$withoutPopupUrl = $withoutPopupAsset->getUrl();
 
 ?>
 
 <?php if($popupModuled==1 && $popupEnabled==1): ?>
 	
 	<script src="<?php echo $bootstrapJssUrl; ?>"></script>
+	
 	<link rel="stylesheet" href="<?php echo $bootstrapCssUrl; ?>">
 
 	<script>
@@ -29,24 +33,11 @@ $bootstrapJssUrl = $bootstrapJsAsset->getUrl();
 	        ],
 	        function($) {
 
-		      var anchors = document.getElementsByTagName('a');
-
-			  for (var i=0; i<anchors.length; i++){
-
-
-			  if(!((anchors[i].href.indexOf(window.location.hostname) >= 0) || anchors[i].href=="#" || anchors[i].href=="javascript:void(0)")){
-
-			   anchors[i].setAttribute('data-target', '#myModal');
-			   anchors[i].setAttribute('data-toggle', 'modal');
-			   
-
-			  }
-			    
-			  }
+	        //Append Modal To Body
 
 	        $("body").append('\
-				  <!-- Modal -->\
-				  <div class="modal fade" id="myModal" role="dialog">\
+				  <!-- External Links Modal -->\
+				  <div class="modal fade" id="externalLinksModal" role="dialog">\
 				    <div class="modal-dialog">\
 				      <!-- Modal content-->\
 				      <div class="modal-content">\
@@ -58,66 +49,20 @@ $bootstrapJssUrl = $bootstrapJsAsset->getUrl();
 				          <p><?php echo $popupText; ?></p>\
 				        </div>\
 				        <div class="modal-footer">\
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>\
-				          <button type="button" id="dacod-external-links-continue" class="btn btn-default">Continue</button>\
+				        <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo __('Close') ?></button>\
+				          <button type="button" id="dacod-external-links-continue" class="btn btn-default"><?php echo __('Continue') ?></button>\
 				        </div>\
 				      </div>\
 				    </div>\
-				  </div>');
-
-	        	var dacodExternalLink = '';
-
-	    
-	           
-
-	            $("a").on("click",function(event){
-
-
-	            	if(!(($(this).attr('href').indexOf(window.location.hostname) >= 0) || $(this).attr('href')=="#" || $(this).attr('href')=="javascript:void(0)")){
-
-		            	event.preventDefault();
-		            	dacodExternalLink = $(this).attr('href');
-
-
-	            	}       	
-
-	            });
-
-	            $("#dacod-external-links-continue").on("click",function(event){
-
-	            	event.preventDefault();
-	            	window.open(dacodExternalLink,'_blank');
-
-	            });
-
-
-	            
+				  </div>');  
 	        }
 	    );
 	</script>
+	<script src="<?php echo $modalControllerUrl; ?>"></script>
 
 
 <?php elseif($popupModuled==1 && $popupEnabled==0): ?>
 
-	<script>
-
-		window.onload = function(){
-
-		  var anchors = document.getElementsByTagName('a');
-		  for (var i=0; i<anchors.length; i++){
-
-		    console.log(window.location.hostname);
-
-		  if(!((anchors[i].href.indexOf(window.location.hostname) >= 0) || anchors[i].href=="#" || anchors[i].href=="javascript:void(0)")){
-
-		   anchors[i].setAttribute('target', '_blank');
-
-		  }
-		    
-		  }
-
-		}
-
-	</script>
+	<script src="<?php echo $withoutPopupUrl; ?>"></script>
 
 <?php endif; ?>
