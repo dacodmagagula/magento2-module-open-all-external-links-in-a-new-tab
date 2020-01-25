@@ -29,7 +29,7 @@ Istallation steps
 5. Go to Stores > Configuration > Dacod on the backend and configure the module.
 
 
-License
+# License
 
 
 MIT License
